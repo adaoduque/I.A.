@@ -90,8 +90,17 @@ if __name__ == "__main__":
 Essa configuração cria um ambiente semelhante a esse:<br />
 ![enviroment](https://drive.google.com/uc?export=download&id=1R7NFtksb5m2hd5lCtZ0rnIHn4gGDnewN)
 
-### Plus
-Incluí 2 agentes, um baseado em tabela (Q-Table) e outro em rede neural artificial com Tensorflow, ambos funcionando perfeitamente.<br /><br />
+# Plus
+Incluí 2 agentes, um baseado em tabela (Q-Table) e outro em rede neural artificial com Tensorflow, ambos funcionando perfeitamente.<br />
+Dentro do diretório ```models```, tem um modelo pré-treinado com 1000 jogos.<br />
+### Como carregar o modelo pré treinado
+
+Na linha 31 e 34, substitua as chamadas do ```brain0.createModel...()``` por:
+```
+brain0.load_model_actor()
+brain0.load_model_critic()
+```
+<br />
 
 
 Duvidas, críticas ou sugestões: <br />
