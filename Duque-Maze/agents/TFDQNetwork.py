@@ -8,7 +8,8 @@ import os
 from collections import deque
 
 class TFDQNetwork():
-    def __init__(self, state_dim, action_dim, replay_size=100000, learn_rate=0.001, discount_rate=0.99, gamma=0.999, loss_fun="mse"):
+    def __init__(self, state_dim, action_dim, replay_size=100000, learn_rate=0.001, discount_rate=0.99, gamma=0.999, loss_fun="mse", mode='train'):
+        self.mode           =  mode
         self.state_dim      =  state_dim
         self.action_dim     =  action_dim
         self.learn_rate     =  learn_rate
@@ -52,9 +53,10 @@ class TFDQNetwork():
             print("Epsilon valor: "+str(self.epsilon))
 
     def select_action(self, s):
-        if random.random() <= self.epsilon:
-            action = random.randrange(self.action_dim)
-            return action
+        if self.mode == 'train':
+            if random.random() <= self.epsilon:
+                action = random.randrange(self.action_dim)
+                return action
         actions = self.modelActor.predict(s)
         action  =  np.argmax(actions[0])
 
@@ -96,20 +98,17 @@ class TFDQNetwork():
             # Train the neural network with data in replay memory
             self.learning(batch_size=50)
 
-    def load_model(self, model_name="brain0.h5"):
-        self.model  =  tf.keras.models.load_model(model_name)
+    def save_model_actor(self, model_path="models/brain0-actor.h5"):
+        self.modelActor.save(model_path)
 
-    def save_model_critic(self, model_name="models/brain0-critic.h5"):
-        self.modelCritic.save(model_name)
+    def save_model_critic(self, model_path="models/brain0-critic.h5"):
+        self.modelCritic.save(model_path)
 
-    def save_model_actor(self, model_name="models/brain0-actor.h5"):
-        self.modelActor.save(model_name)
+    def load_model_actor(self, model_path="models/brain0-actor.h5"):
+        self.modelActor  =  tf.keras.models.load_model(model_path)
 
-    def load_model_critic(self, model_name="models/brain0-critic.h5"):
-        self.modelCritic.save(model_name)
-
-    def load_model_actor(self, model_name="models/brain0-actor.h5"):
-        self.modelActor.save(model_name)
+    def load_model_critic(self, model_path="models/brain0-critic.h5"):
+        self.modelCritic  =  tf.keras.models.load_model(model_path)
 
     def score(self):
         return sum(self.reward_window) / (len(self.reward_window) + 1.)

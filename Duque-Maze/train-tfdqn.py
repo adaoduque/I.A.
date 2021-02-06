@@ -25,13 +25,15 @@ def train():
     state_dim = shape[0] * shape[1]
 
     # Instance neural network with Tensorflow
-    brain0  =  TFDQNetwork(state_dim=state_dim, action_dim=4, replay_size=100000, learn_rate=0.001)
+    brain0  =  TFDQNetwork(state_dim=state_dim, action_dim=4, replay_size=100000, learn_rate=0.001, mode='')
 
     # Create model actor
-    brain0.createModelActor()
+    #brain0.createModelActor()
+    brain0.load_model_actor()
 
     # Create model Critic
-    brain0.createModelCritic()
+    #brain0.createModelCritic()
+    brain0.load_model_critic()
 
     # Initialize reward with zero
     reward = 0
