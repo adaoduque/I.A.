@@ -94,6 +94,6 @@ Essa configuração cria um ambiente semelhante a esse:<br />
 Incluí 2 agentes, um baseado em tabela (Q-Table) e outro em rede neural artificial com Tensorflow, ambos funcionando perfeitamente.<br /><br />
 
 
-Duvidas, criticas ou sugestões: <br />
+Duvidas, críticas ou sugestões: <br />
 ```Telegram```: @adaoduque<br />
 ```E-mail```: adaoduquesn@gmail.com
