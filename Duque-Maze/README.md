@@ -95,7 +95,7 @@ Incluí 2 agentes, um baseado em tabela (Q-Table) e outro em rede neural artific
 Dentro do diretório ```models```, tem um modelo pré-treinado com 1000 jogos.<br />
 ### Como carregar o modelo pré treinado
 
-No arquivo ```train-tfdqn.py```, troque o ```mode``` para ```''``` (vázio) e nas linhas 31 e 34, substitua as chamadas do ```brain0.createModel...()``` por:
+No arquivo ```train-tfdqn.py```, troque o ```mode``` para ```''``` (vazio) e nas linhas 31 e 34, substitua as chamadas do ```brain0.createModel...()``` por:
 ```
 brain0.load_model_actor(model_name="models/brain0-actor.h5")
 brain0.load_model_critic(model_name="models/brain0-critic.h5")
