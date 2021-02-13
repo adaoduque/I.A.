@@ -1,7 +1,19 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from environment.Maze import Maze
 from agents.QTable import QTable
 
+def showScores(scores0, scores1, name, save=True):
+    plt.figure(0)
+    plt.clf()
+    plt.title('Learning')
+    plt.xlabel('Sessions')
+    plt.ylabel('Rewards')
+    plt.plot(scores0, color='C1')
+    plt.plot(scores1, color='C2')
+    plt.pause(0.001)
+    if save:
+        plt.savefig(name)
 
 def train():
     # Episodes to run
@@ -14,10 +26,14 @@ def train():
     state_dim = shape[0] * shape[1]
 
     # Instance Q-Table
-    q_table = QTable(state_dim=state_dim, action_dim=4, gamma=0.999, alpha=0.8)
+    Q = QTable(state_dim=state_dim, action_dim=4, gamma=0.999, alpha=0.8)
+    Q.reset()
 
     # Initialize reward with zero
-    reward = 0
+    r = 0
+
+    scores0 = []
+    scores1 = []
 
     # Loop episodes
     for episode in range(1, episodes + 1):
@@ -32,26 +48,76 @@ def train():
         done = False
 
         # Get current state
-        state = appMaze.get_observable()
+        s = appMaze.get_observable()
 
         # Play
         while not done:
+
             # Get action by q_table or epsilon pseudo random
-            action = q_table.select_action(state)
+            a = Q.epsilon_greedy(s)
 
             # Execute action
-            next_state, reward, done = appMaze.step(action)
+            s_, r, done = appMaze.step(a)
 
             # Update Q-Table
-            q_table.update_q_table(state, next_state, action, reward)
+            Q.update(s, s_, a, reward=r)
+
+            scores0.append(Q.score())
 
             # Set current state now
-            state = next_state
+            s = s_
 
-        if reward > 0:
+        if r > 0:
             print("Won")
         else:
             print("Lose")
+
+
+    Q.reset('sarsa')
+
+    # Initialize reward with zero
+    r = 0
+    scores1 = []
+
+    # Loop episodes
+    for episode in range(1, episodes + 1):
+
+        # Print current episode
+        print("\nEpisode: {}/{}".format(episode, episodes))
+
+        # Reset game
+        appMaze.reset()
+
+        # Done False, is init
+        done = False
+
+        # Get current state
+        s = appMaze.get_observable()
+
+        a  = Q.epsilon_greedy(s)
+
+        # Play
+        while not done:
+
+            # Execute action
+            s_, r, done = appMaze.step(a)
+
+            a_ =  Q.epsilon_greedy(s_)
+
+            # Update Q-Table
+            Q.update(s, s_, a, a_, r, done)
+
+            scores1.append(Q.score())
+
+            # Set current state now
+            s, a = s_, a_
+
+        if r > 0:
+            print("Won")
+        else:
+            print("Lose")
+
+    # showScores(scores0, scores1, 'comparativo.png')
 
     # Finish
     print("Finished")
@@ -63,8 +129,8 @@ if __name__ == "__main__":
         "height": 600,  # Height for canvas
         "width": 600,  # Width for canvas
         "widthSquares": 100,  # Width and height for square
-        "episodes": 100000, # Run this number of episodes
-        "animate": True, # Animate action
+        "episodes": 300, # Run this number of episodes
+        "animate": False, # Animate action
         "rewardPositive": 10,
         "rewardNegative": -10,
         "rewardEachStep": -0.01,
@@ -84,7 +150,7 @@ if __name__ == "__main__":
     appMaze = Maze(config, mode='train-qtable')
 
     # Run train
-    appMaze.after(2, train)
+    appMaze.after(3000, train)
 
     # Show Tkinter GUI
     appMaze.mainloop()
